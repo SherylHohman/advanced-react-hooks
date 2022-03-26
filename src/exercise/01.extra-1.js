@@ -4,16 +4,14 @@
 
 import * as React from 'react'
 
-//   // Format for reducerFunction:
-//   // function reducer(previousState, <whatever params I need>)
-//   // 	return the newState. Usually an object; in this case, simply a value.
-
-const countReducer = (state, newState) => newState
+/* const countReducer = (state, newState) => newState */
+const countReducer = (state, step) => state + step
 
 function Counter({initialCount = 0, step = 1}) {
   const [count, setCount] = React.useReducer(countReducer, initialCount)
 
-  const increment = () => setCount(count + step)
+  /* const increment = () => setCount(count + step) */
+  const increment = () => setCount(step)
   return <button onClick={increment}>{count}</button>
 }
 
@@ -25,6 +23,10 @@ export default App
 
 // 01-extra-1
 /* SH Notes 01.extra-1.js:
+// API for useReducer's reducer function:
+// function reducer(previousState, <whatever params I need>)
+// function reducer(state, action)  // ie. action.type, action.payload
+// 	return the newState.  // Usually an object; in this case, simply a value.
  */
 /* Instructions 01.extra-1.js
 		1. 💯 accept the step as the action
