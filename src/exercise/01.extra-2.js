@@ -6,7 +6,16 @@ import * as React from 'react'
 
 // Change API again!
 // const countReducer = (state, step) => ({count: state.count + step})
-const countReducer = (prevState, {count}) => ({count})
+
+// const countReducer = (prevState, {count}) => ({count})
+// refactors to:
+const countReducer = (prevState, newState) => ({...newState})
+
+// or it could refactor to:
+// const countReducer = (prevState, statePropsToUpdate) => ({
+//   ...prevState,
+//   ...statePropsToUpdate,
+// })
 
 function Counter({initialCount = 0, step = 1}) {
   const [state, setState] = React.useReducer(countReducer, {
@@ -26,6 +35,36 @@ function App() {
 export default App
 
 /* SH Notes 01.extra-2.js:
+		changes API again. Now back to passing in the new state, like we did in 01.js.
+		except this time state is an object. (extra-1 had us calculate state within
+		the reducer; we instead passed in the data required to calculate the new state)
+		That evidentally was a temp diversion.
+
+		A different interpretation of the new API is that we are passing in only the
+		properties on state that we want changed. Since there is only 1 property, it
+		is inclear if the exercise is guiding us toward passing the new state as a
+		whole, or the new values for properties that we want updated on the state
+		object.
+
+		So I have both versions (one commented out) in my code.
+
+		It would be awesome if the instructions hinted at the goal we are reaching
+		for, and hence would better guide how we should tailor our reducer function.
+		(It matters for param naming, and for the format we settle on for how we
+		compute the returned state object, so the proper use case is accounted for,
+		without unnecessary code complexity. -- though I TEND togo for the more
+		complex version to cover more cases, I see that Dodds & other pros TEND to
+		prefer minimal, but complete for the use case. I tend toward risk adverse
+		that could prevent future errors in the case of refactoring beyond the init
+		usage.
+		For example: in Hooks module, I PREFER .then.catch. He prefers (success, failure))
+		Of course I worry that some later re-write might add code besides a setState
+		call, that introduce an error. If that were to happen, the error might not
+		be caught appropriately. But I guess, it is dumb to think the fetch function
+		would ever be re-written to include any code other than setState. And they
+		have the foresight to KNOW that. BTW, I updated my code to follow THEIR lead.
+		But, I prefer to have the safer default to be my HABIT. Otherwise, I forget
+		when those edge cases might arise, and can produce a difficult to find bug.
  */
 /* Instructions 01.extra-2.js | useReducer:
 		### 2. 💯 simulate setState with an object
