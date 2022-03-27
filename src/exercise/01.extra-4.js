@@ -4,26 +4,25 @@
 
 import * as React from 'react'
 
-const countReducer = (prevState, action) => {
-  let state
-  switch (action.type) {
+const countReducer = (state, action) => {
+  const {type, step} = action
+  switch (type) {
     case 'INCREMENT':
-      state = {count: prevState.count + action.step} // REPLACES State
-      // state = {...prevState, count: prevState.count + action.step}  // MODIFIES
-      break
+      return {
+        ...state,
+        count: state.count + step,
+      }
     default:
       throw Error(`unknown action.type ${action.type} in countReducer`)
   }
-  return state
-
-  // REPLACE All state with nextState:
-  // state = {              count: prevState.count + action.step};
-  // vs ONLY MODIFY specified nextState:
-  // state = {...prevState, count: prevState.count + action.step};
+  // above version MODIFIES State (traditional dispatch-type reducer)
+  // below version REPLACES State (not traditional reducer, unless that is the job for that action.type)
+  // return {count: state.count + step}
 }
 
 function Counter({initialCount = 0, step = 1}) {
-  /*   const [state, setState] = React.useReducer(countReducer, {
+  /*
+	const [state, setState] = React.useReducer(countReducer, {
     count: initialCount,
   })
  */
@@ -33,7 +32,8 @@ function Counter({initialCount = 0, step = 1}) {
 
   const {count} = state
 
-  // const incrementByValue = () => setState({count: count + step})
+  // const incrementByValue = () =>
+  //	setState({count: count + step})
 
   // const incrementByFunction = () =>
   //   setState(currentState => ({count: currentState.count + step}))
