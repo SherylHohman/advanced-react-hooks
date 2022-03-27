@@ -4,22 +4,33 @@
 
 import * as React from 'react'
 
-const countReducer = (prevState, nextState) => {
-  // replace state with nextState
-  if (typeof nextState === 'function') {
-    return nextState(prevState)
-  } else return nextState
+const countReducer = (prevState, action) => {
+  let state
+  switch (action.type) {
+    case 'INCREMENT':
+      state = {count: prevState.count + action.step} // REPLACES State
+      // state = {...prevState, count: prevState.count + action.step}  // MODIFIES
+      break
+    default:
+      throw Error(`unknown action.type ${action.type} in countReducer`)
+  }
+  return state
 
-  // OR ONLY modify specified nextState:
-  //
-  // return {...prevState, ...nextState(prevState)}
-  // } else return {...prevState, ...nextState}
+  // REPLACE All state with nextState:
+  // state = {              count: prevState.count + action.step};
+  // vs ONLY MODIFY specified nextState:
+  // state = {...prevState, count: prevState.count + action.step};
 }
 
 function Counter({initialCount = 0, step = 1}) {
-  const [state, setState] = React.useReducer(countReducer, {
+  /*   const [state, setState] = React.useReducer(countReducer, {
     count: initialCount,
   })
+ */
+  const [state, dispatch] = React.useReducer(countReducer, {
+    count: initialCount,
+  })
+
   const {count} = state
 
   // const incrementByValue = () => setState({count: count + step})
@@ -27,8 +38,8 @@ function Counter({initialCount = 0, step = 1}) {
   // const incrementByFunction = () =>
   //   setState(currentState => ({count: currentState.count + step}))
 
-  const increment = () =>
-    setState(currentState => ({count: currentState.count + step}))
+  // incrementByDispatch ;-)
+  const increment = () => dispatch({type: 'INCREMENT', step})
 
   return <button onClick={increment}>{count}</button>
 }
@@ -67,6 +78,22 @@ export default App
 	//	TODO: Even better would be to set up examples to naturally progress from
 	//			setting equal to newState, to modifying only specified newState !
 */
+/* NOTE 2: on progression of this section:
+		In exercise 0, we calculate new state value outside the reducer
+		In extra-1, we move calculation into the reducer
+		In extra-2, we move calculation back outside the reducer
+		In extra-3, it is still outside the reducer
+		In extra-4, we move it back into the reducer
+	This makes it seem psychotic. Not a good progression.
+	 aslo not good for comparing methods.
+	 I think this lesson set should have a smoother progression.
+	 Also having more than 1 item in state might be a good idea.
+	 And clarity between Replacing vs Modifying ought to be clearer.
+	 TODO: ?? make some solid suggesion for course mod, or reword instructions?
+	 				(probably not, but honestly, I think there is room for improvement,
+						even if that means creating a different example to work through
+					 )
+ */
 
 // ### 4. 💯 traditional dispatch object with a type and switch statement
 /* SH Notes 01.extra-4.js:
