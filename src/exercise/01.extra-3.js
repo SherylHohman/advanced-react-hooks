@@ -4,13 +4,27 @@
 
 import * as React from 'react'
 
-const countReducer = (prevState, newState) => ({...newState})
+// nextState can be either:
+//
+// - the new state:
+//			{count: <some number>}
+//
+// - or a function, that returns the new state, based on the old state:
+//			(currentState) => ({count: currentState + step})
+//
+// 	 where calling nextState(prevState) should return:
+//	 	the new state:  {count: currentState + step}
+//   	ie: 						{count: <some number>}
+//	 	ie: 						the new state value
 
-// or it could refactor to:
-// const countReducer = (prevState, statePropsToUpdate) => ({
-//   ...prevState,
-//   ...statePropsToUpdate,
-// })
+/* const countReducer = (prevState, newState) => ({...newState}) */
+const countReducer = (prevState, nextState) => {
+  if (typeof nextState === 'function') {
+    return nextState(prevState)
+    // return {...prevState, ...nextState(prevState)}
+  } else return nextState
+  // } else return {...prevState, ...nextState}
+}
 
 function Counter({initialCount = 0, step = 1}) {
   const [state, setState] = React.useReducer(countReducer, {
@@ -18,24 +32,26 @@ function Counter({initialCount = 0, step = 1}) {
   })
   const {count} = state
 
-  // extra-3: reducer function accepts a function OR a value
-  //	`this.setState` from class components can also accept a function.
-  //	So let's add support for that with our simulated `setState` function.
-  //	See if you can figure out how to make your reducer support both the object
-  //	as in the last extra credit as well as a function callback:
+  const incrementByValue = () => setState({count: count + step})
 
-  //	```javascript
-  //	const [state, setState] = React.useReducer(countReducer, {
-  //		count: initialCount,
-  //	})
+  const incrementByFunction = () =>
+    setState(currentState => ({count: currentState.count + step}))
 
-  //	const {count} = state
-  //	const increment = () =>
-  //		setState(currentState => ({count: currentState.count + step}))
-  //	```
-
-  const increment = () => setState({count: count + step})
-  return <button onClick={increment}>{count}</button>
+  /* const increment = () =>
+    setState(currentState => ({count: currentState.count + step}))
+ */
+  return (
+    <>
+      Increment By VALUE: supplies new state directly
+      <br />
+      <button onClick={incrementByValue}>{count}</button>)
+      <hr />
+      Increment By FUNCTION: returns new state when invoked
+      <br />
+      <button onClick={incrementByFunction}>{count}</button>
+      {/* <button onClick={increment}>{count}</button>) */}
+    </>
+  )
 }
 
 function App() {
@@ -46,6 +62,15 @@ export default App
 
 // ### 3. 💯 simulate setState with an object OR function
 /* SH Notes 01.extra-3.js:
+		I decided to show *2* counters.
+		One that passes in the new state value directly, as in 01.extra-2
+		One that passes in a function that, when invoked, calculates and
+			returns the new state, based on the first param of the reducer
+			function, which is supplied by React.
+		Showing both counters shows that my reducer function indeed handles both
+			use cases.
+		It also makes it easy to compare how the 2 versions of the newState
+			function (the onClick handler) would be written.
  */
 /* Instructions 01.extra-3.js | useReducer:
 
